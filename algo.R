@@ -1,19 +1,4 @@
 rm(list = ls())
-xOHC <- function(X, C) {
-  
-}
-partOHC <- function(Y, X, L, C) {
-  n <- nrow(X)
-  thrs <- sort(Y)[floor(n / L * (1:L))]
-  nums0 <- as.numeric(cut(Y, c(-Inf, thrs), labels = 1:L, include.lowest = TRUE))
-  maxs <- apply(X, 1, max)
-  subX <- lapply(split(X, nums0), matrix, ncol = ncol(X))
-  nums <- numeric(n)
-  for(i in 1:L)
-    nums[nums0 == i] <- xOHC()
-  subX <- lapply(subX, xOHC, C)
-}
-
 partSEB <- function(D, L = NULL, C) {
   nr <- nrow(D)
   nc <- ncol(D)
