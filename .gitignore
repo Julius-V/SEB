@@ -1,3 +1,5 @@
 
 *.pdf
 *.PNG
+.DS_Store
+.Rhistory
