@@ -1,3 +1,4 @@
+# It may be not possible to split more!
 rm(list = ls())
 partSEB <- function(D, L = NULL, C) {
   nr <- nrow(D)
@@ -16,12 +17,14 @@ partSEB <- function(D, L = NULL, C) {
     nums0
   }
 }
+
+
 nc <- 3
 L <- 5
 C <- 3
-# D <- matrix(c(runif(100000), rnorm(100000), rlnorm(100000, sdlog = 0.5)), ncol = nc)
-D <- matrix(runif(50000 * nc), ncol = nc)
-table(partSEB(D, L, C))
+D <- matrix(c(runif(100000), rnorm(100000), rlnorm(100000, sdlog = 0.5)), ncol = nc)
+# D <- matrix(runif(50000 * nc), ncol = nc)
+table(partSEB3(D, L, C)$As)
 L * C^(nc - 1)
 
 library(RColorBrewer)
@@ -29,6 +32,8 @@ n <- L * C^(nc - 1)
 qual_col_pals <- brewer.pal.info[brewer.pal.info$category == 'qual',]
 col_vector <- unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals)))
 library(car)
-scatter3d(D[, 1], D[, 2], D[, 3], point.col = col_vector[partSEB(D, L, C)], surface = FALSE)
+
+scatter3d(D[, 1], D[, 2], D[, 3], point.col = col_vector[partSEB3(D, L, C)$As], surface = FALSE,
+          xlab = "Y", ylab = "X1", zlab = "X2", axis.scales = FALSE, grid = FALSE, grid.lines = FALSE)
 # plot(D[, 2], partSEB(D, L, C))
 
