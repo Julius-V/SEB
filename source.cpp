@@ -5,7 +5,7 @@ using namespace Rcpp;
 using namespace arma;
 
 uvec fastCut(vec x, vec breaks) {
-  int n = x.n_elem;
+  const int n = x.n_elem;
   uvec labels(n);
   for (int i = 0; i < n; i++) {
     int j = 0;
@@ -18,7 +18,7 @@ uvec fastCut(vec x, vec breaks) {
 }
 
 // [[Rcpp::export]]
-List SEB(mat D, uvec times, bool intervals = true, std::string order = "successive") {
+List SEB(mat D, uvec times, const bool intervals = true, const std::string order = "successive") {
   const int nr = D.n_rows;
   const int nc = D.n_cols;
   if (times.n_elem != nc)
@@ -36,8 +36,9 @@ List SEB(mat D, uvec times, bool intervals = true, std::string order = "successi
   if (ncells > nr)
     stop("There are more cells than observations.");
   const vec D0 = D.col(0);
+  const uvec idx = arma::floor((nr * regspace<uvec>(1, nints)) / nints) - 1;
   vec breaks = sort(D0);
-  breaks = breaks(arma::floor((nr * regspace<uvec>(1, nints)) / nints) - 1);
+  breaks = breaks(idx);
   breaks(nints - 1) = R_PosInf;
   const uvec labelsVec = fastCut(D0, breaks);
   if (nc > 1) {

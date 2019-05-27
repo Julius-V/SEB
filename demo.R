@@ -4,7 +4,7 @@ sourceCpp("source.cpp")
 
 k <- 3 # Number of variables
 C <- 3 # Number of cuts long each axis
-n <- C^k * 5000 # Five observations per cell
+n <- C^k * 5 # Five observations per cell
 M <- matrix(rnorm(n * k, sd = 10), ncol = k)
 
 demo1 <- SEB(M, times = rep(C, k)) # With intervals
