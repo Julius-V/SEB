@@ -18,36 +18,36 @@ uvec fastCut(vec x, vec breaks) {
 }
 
 // [[Rcpp::export]]
-List SEB(mat D, uvec times, const bool intervals = true, const std::string order = "successive") {
+List SEB(mat D, uvec nints, const bool intervals = true, const std::string order = "successive") {
   const int nr = D.n_rows;
   const int nc = D.n_cols;
-  if (times.n_elem != nc)
-    stop("The number of specified cutting times has to be the same as the number of columns.");
+  if (nints.n_elem != nc)
+    stop("'nints' has to have as many elements as 'D' has has columns.");
   if (order != "successive" & order != "random") {
-    stop("The order must be either successive or random.");
+    stop("'order' must be either successive or random.");
   } else if (order == "random") {
     const uvec o = shuffle(regspace<uvec>(0, nc - 1));
-    times = times(o);
+    nints = nints(o);
     D = D.cols(o);
   }
-  const int nints = times[0];
-  const int ncells = std::accumulate(times.begin(), times.end(), 1, std::multiplies<int>());
-  const int ncells0 = ncells / nints;
+  const int nints0 = nints[0];
+  const int ncells = std::accumulate(nints.begin(), nints.end(), 1, std::multiplies<int>());
+  const int ncells0 = ncells / nints0;
   if (ncells > nr)
-    stop("There are more cells than observations.");
+    stop("The total number of cells cannot exceed the number of observations.");
   const vec D0 = D.col(0);
-  const uvec idx = arma::floor((nr * regspace<uvec>(1, nints)) / nints) - 1;
+  const uvec idx = arma::floor((nr * regspace<uvec>(1, nints0)) / nints0) - 1;
   vec breaks = sort(D0);
   breaks = breaks(idx);
-  breaks(nints - 1) = R_PosInf;
+  breaks(nints0 - 1) = R_PosInf;
   const uvec labelsVec = fastCut(D0, breaks);
   if (nc > 1) {
     uvec labelsMat(nr);
     const mat D1 = D.cols(1, nc - 1);
     mat Ints(ncells, nc * 2);
-    for (int i = 1; i <= nints; i++) {
+    for (int i = 1; i <= nints0; i++) {
       const mat subD = D1.rows(find(labelsVec == i));
-      const List subSEB = SEB(subD, times.subvec(1, nc - 1), intervals);
+      const List subSEB = SEB(subD, nints.subvec(1, nc - 1), intervals);
       const uvec subLabels = subSEB[0];
       int k = 0;
       for (int j = 0; j < nr; j++) {
@@ -70,10 +70,10 @@ List SEB(mat D, uvec times, const bool intervals = true, const std::string order
     }
   } else {
     if (intervals) {
-      mat Ints0(nints, 2);
+      mat Ints0(nints0, 2);
       Ints0(0, 0) = R_NegInf;
-      if(nints > 1)
-        Ints0.submat(1, 0, nints - 1, 0) = breaks.subvec(0, nints - 2);
+      if(nints0 > 1)
+        Ints0.submat(1, 0, nints0 - 1, 0) = breaks.subvec(0, nints0 - 2);
       Ints0.col(1) = breaks;
       return List::create(_["labels"] = as<std::vector<int> >(wrap(labelsVec)), _["intervals"] = Ints0);
     } else {
