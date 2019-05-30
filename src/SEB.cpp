@@ -18,49 +18,49 @@ uvec fastCut(vec x, vec breaks) {
 }
 
 // [[Rcpp::export]]
-List SEB(mat D, uvec nints, const bool intervals = true, const std::string order = "successive") {
-  const int nr = D.n_rows;
-  const int nc = D.n_cols;
+List SEB(mat X, uvec nints, const bool intervals = true, const std::string order = "successive") {
+  const int nr = X.n_rows;
+  const int nc = X.n_cols;
   if (nints.n_elem != nc)
-    stop("'nints' has to have as many elements as 'D' has has columns.");
+    stop("'nints' has to have as many elements as 'X' has columns.");
   if (order != "successive" & order != "random") {
     stop("'order' must be either successive or random.");
   } else if (order == "random") {
     const uvec o = shuffle(regspace<uvec>(0, nc - 1));
     nints = nints(o);
-    D = D.cols(o);
+    X = X.cols(o);
   }
   const int nints0 = nints[0];
-  const int ncells = std::accumulate(nints.begin(), nints.end(), 1, std::multiplies<int>());
-  const int ncells0 = ncells / nints0;
-  if (ncells > nr)
-    stop("The total number of cells cannot exceed the number of observations.");
-  const vec D0 = D.col(0);
+  const int nblocks = std::accumulate(nints.begin(), nints.end(), 1, std::multiplies<int>());
+  const int nblocks1 = nblocks / nints0;
+  if (nblocks > nr)
+    stop("The total number of blocks cannot exceed the number of observations.");
+  const vec X0 = X.col(0);
   const uvec idx = arma::floor((nr * regspace<uvec>(1, nints0)) / nints0) - 1;
-  vec breaks = sort(D0);
+  vec breaks = sort(X0);
   breaks = breaks(idx);
   breaks(nints0 - 1) = R_PosInf;
-  const uvec labelsVec = fastCut(D0, breaks);
+  const uvec labelsVec = fastCut(X0, breaks);
   if (nc > 1) {
     uvec labelsMat(nr);
-    const mat D1 = D.cols(1, nc - 1);
-    mat Ints(ncells, nc * 2);
+    const mat X1 = X.cols(1, nc - 1);
+    mat Ints(nblocks, nc * 2);
     for (int i = 1; i <= nints0; i++) {
-      const mat subD = D1.rows(find(labelsVec == i));
-      const List subSEB = SEB(subD, nints.subvec(1, nc - 1), intervals);
+      const mat subX = X1.rows(find(labelsVec == i));
+      const List subSEB = SEB(subX, nints.subvec(1, nc - 1), intervals);
       const uvec subLabels = subSEB[0];
       int k = 0;
       for (int j = 0; j < nr; j++) {
         if (labelsVec[j] == i) {
-          labelsMat[j] = subLabels[k] + ncells0 * (i - 1);
+          labelsMat[j] = subLabels[k] + nblocks1 * (i - 1);
           k++;
         }
       }
       if (intervals) {
         const mat subInts = subSEB["intervals"];
-        Ints.submat(ncells0 * (i - 1), 0, ncells0 * i - 1, 0).fill((i == 1) ? R_NegInf : breaks[i - 2]);
-        Ints.submat(ncells0 * (i - 1), 1, ncells0 * i - 1, 1).fill(breaks[i - 1]);
-        Ints.submat(ncells0 * (i - 1), 2, ncells0 * i - 1, 2 * nc - 1) = subInts;
+        Ints.submat(nblocks1 * (i - 1), 0, nblocks1 * i - 1, 0).fill((i == 1) ? R_NegInf : breaks[i - 2]);
+        Ints.submat(nblocks1 * (i - 1), 1, nblocks1 * i - 1, 1).fill(breaks[i - 1]);
+        Ints.submat(nblocks1 * (i - 1), 2, nblocks1 * i - 1, 2 * nc - 1) = subInts;
       }
     }
     if (intervals) {

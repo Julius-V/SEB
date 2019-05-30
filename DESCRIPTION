@@ -1,0 +1,15 @@
+Package: SEB
+Type: Package
+Title: Partitioning Data into Statistically Equivalent Blocks
+Version: 1.0
+Date: 2019-05-30
+Author: Julius Vainora
+Maintainer: Julius Vainora <julius.vainora@gmail.com>
+Description: A fast implementation of a data partitioning approach due to Gessaman (1970).
+    It finds a set of hyperrectangles, known as stochastically equivalent blocks, containing the
+    same number of observations.
+License: GPL (>= 2)
+Imports: Rcpp (>= 1.0.1)
+Encoding: UTF-8
+LinkingTo: Rcpp, RcppArmadillo
+RoxygenNote: 6.1.1
