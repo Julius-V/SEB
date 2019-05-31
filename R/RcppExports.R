@@ -4,14 +4,14 @@
 #' Partitioning Data into Statistically Equivalent Blocks
 #'
 #' @param X a numeric matrix.
-#' @param nints an integer vector specifying into how many intervals each variable (column of \code{X}) should be cut.
-#' @param intervals logical Whether not only observations should be assigned to blocks, but also a full characterization of the blocks should be returned. Default is \code{TRUE}.
+#' @param nints a vector of positive integers specifying into how many intervals each variable (column of \code{X}) should be cut.
+#' @param intervals logical. Whether not only observations should be assigned to blocks, but also a full characterization of the blocks should be returned. Default is \code{TRUE}.
 #' @param order a character string specifying how to proceed in cutting axes, must be either "\code{successive}" or "\code{random}". Default is "\code{successive}".
 #'
 #' @return A list of length one or two containing the following components:
 #' 
 #' \item{labels}{An integer vector of block labels for each observation (row of \code{X}).}
-#' \item{intervals}{A numeric matrix with \code{prod(nints)} rows and \code{2 * ncol(X)} columns describing each block. For any variable \code{k} from 1 to \code{ncol(X)}, columns \code{2 * k - 1} and \code{2 * k} contain intervals, of the form (a, b], to which variable \code{k} belongs in the corresponding block.}
+#' \item{intervals}{Returned if \code{intervals} is \code{TRUE}. A numeric matrix with \code{prod(nints)} rows and \code{2 * ncol(X)} columns describing each block. For any variable \code{k} from 1 to \code{ncol(X)}, columns \code{2 * k - 1} and \code{2 * k} contain intervals, of the form (a, b], to which variable \code{k} belongs in the corresponding block.}
 #' @author Julius Vainora
 #' @references M.P. Gessaman \emph{A Consistent Nonparametric Multivariate Density Estimator Based on Statistically Equivalent Blocks} The Annals of Mathematical Statistics (1970) 1344--1346
 #' @export
@@ -33,7 +33,16 @@
 #' 
 #' # Returning only the block labels
 #' SEB(X, nints, FALSE)
-SEB <- function(X, nints, intervals = TRUE, order = "successive") {
-  .Call(`_SEB_SEB`, X, nints, intervals, order)
+SEB <- function(X, nints, intervals = TRUE, order = c("successive", "random")) {
+  if(!is.matrix(X) || !is.numeric(X))
+    stop("'X' has to be a numeric matrix")
+  if(!is.vector(nints) || !is.numeric(nints) || any(nints < 1) || any(!is.finite(nints)))
+    stop("'nints' has to be a numeric vector of positive integers")
+  if(!is.logical(intervals))
+    stop("'intervals' must be logical")
+  if(length(nints) != ncol(X))
+    stop("'nints' has to have as many elements as 'X' has columns");
+  if(prod(nints) > nrow(X))
+    stop("The total number of blocks cannot exceed the number of observations")
+  .Call(`_SEB_SEB`, X, nints, intervals, match.arg(order))
 }
-
