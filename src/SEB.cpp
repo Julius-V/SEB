@@ -21,11 +21,7 @@ uvec fastCut(vec x, vec breaks) {
 List SEB(mat X, uvec nints, const bool intervals = true, const std::string order = "successive") {
   const int nr = X.n_rows;
   const int nc = X.n_cols;
-  if (nints.n_elem != nc)
-    stop("'nints' has to have as many elements as 'X' has columns.");
-  if (order != "successive" & order != "random") {
-    stop("'order' must be either successive or random.");
-  } else if (order == "random") {
+  if (order == "random") {
     const uvec o = shuffle(regspace<uvec>(0, nc - 1));
     nints = nints(o);
     X = X.cols(o);
@@ -33,8 +29,6 @@ List SEB(mat X, uvec nints, const bool intervals = true, const std::string order
   const int nints0 = nints[0];
   const int nblocks = std::accumulate(nints.begin(), nints.end(), 1, std::multiplies<int>());
   const int nblocks1 = nblocks / nints0;
-  if (nblocks > nr)
-    stop("The total number of blocks cannot exceed the number of observations.");
   const vec X0 = X.col(0);
   const uvec idx = arma::floor((nr * regspace<uvec>(1, nints0)) / nints0) - 1;
   vec breaks = sort(X0);

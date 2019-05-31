@@ -16,10 +16,10 @@ SEB(X, nints, intervals = TRUE, order = c("successive", "random"))
 \item{order}{a character string specifying how to proceed in cutting axes, must be either "\code{successive}" or "\code{random}". Default is "\code{successive}".}
 }
 \value{
-A list of length one or two containing the following components:
+A list of length one or two containing the following components.
 
 \item{labels}{An integer vector of block labels for each observation (row of \code{X}).}
-\item{intervals}{Returned if \code{intervals} is \code{TRUE}. A numeric matrix with \code{prod(nints)} rows and \code{2 * ncol(X)} columns describing each block. For any variable \code{k} from 1 to \code{ncol(X)}, columns \code{2 * k - 1} and \code{2 * k} contain intervals, of the form (a, b], to which variable \code{k} belongs in the corresponding block.}
+\item{intervals}{Returned if \code{intervals} is \code{TRUE}. A numeric matrix with \code{prod(nints)} rows and \code{2 * ncol(X)} columns describing each block. For any variable \code{k} from 1 to \code{ncol(X)}, columns \code{2 * k - 1} and \code{2 * k} contain intervals, of the form (a, b], to which variable \code{k} belongs to in the corresponding block.}
 }
 \description{
 Partitioning Data into Statistically Equivalent Blocks
