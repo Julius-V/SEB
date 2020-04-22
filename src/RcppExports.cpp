@@ -5,16 +5,15 @@
 #include <Rcpp.h>
 
 using namespace Rcpp;
-using namespace arma;
 
 // SEB
-List SEB(mat X, uvec nints, const bool intervals, const std::string order);
+List SEB(arma::mat X, arma::uvec nints, const bool intervals, const std::string order);
 RcppExport SEXP _SEB_SEB(SEXP XSEXP, SEXP nintsSEXP, SEXP intervalsSEXP, SEXP orderSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< uvec >::type nints(nintsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type nints(nintsSEXP);
     Rcpp::traits::input_parameter< const bool >::type intervals(intervalsSEXP);
     Rcpp::traits::input_parameter< const std::string >::type order(orderSEXP);
     rcpp_result_gen = Rcpp::wrap(SEB(X, nints, intervals, order));

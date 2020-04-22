@@ -4,7 +4,7 @@
 \alias{SEB}
 \title{Partitioning Data into Statistically Equivalent Blocks}
 \usage{
-SEB(X, nints, intervals = TRUE, order = c("successive", "random"))
+SEB(X, nints, intervals = TRUE, order = "successive")
 }
 \arguments{
 \item{X}{a numeric matrix.}

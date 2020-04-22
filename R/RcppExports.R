@@ -33,7 +33,7 @@
 #' 
 #' # Returning only the block labels
 #' SEB(X, nints, FALSE)
-SEB <- function(X, nints, intervals = TRUE, order = c("successive", "random")) {
+SEB <- function(X, nints, intervals = TRUE, order = "successive")) {
   if(!is.matrix(X) || !is.numeric(X))
     stop("'X' has to be a numeric matrix")
   if(!is.vector(nints) || !is.numeric(nints) || any(nints < 1) || any(!is.finite(nints)))
@@ -44,5 +44,5 @@ SEB <- function(X, nints, intervals = TRUE, order = c("successive", "random")) {
     stop("'nints' has to have as many elements as 'X' has columns");
   if(prod(nints) > nrow(X))
     stop("The total number of blocks cannot exceed the number of observations")
-  .Call(`_SEB_SEB`, X, nints, intervals, match.arg(order))
+  .Call(`_SEB_SEB`, X, nints, intervals, order)
 }

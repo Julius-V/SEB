@@ -1,3 +1,4 @@
+#define RCPP_ARMADILLO_RETURN_COLVEC_AS_VECTOR
 #include <RcppArmadillo.h>
 // [[Rcpp::depends(RcppArmadillo)]]
 
@@ -18,7 +19,7 @@ uvec fastCut(vec x, vec breaks) {
 }
 
 // [[Rcpp::export]]
-List SEB(mat X, uvec nints, const bool intervals = true, const std::string order = "successive") {
+List SEB(arma::mat X, arma::uvec nints, const bool intervals = true, const std::string order = "successive") {
   const int nr = X.n_rows;
   const int nc = X.n_cols;
   if (order == "random") {
@@ -58,9 +59,9 @@ List SEB(mat X, uvec nints, const bool intervals = true, const std::string order
       }
     }
     if (intervals) {
-      return List::create(_["labels"] = as<std::vector<int> >(wrap(labelsMat)), _["intervals"] = Ints);
+      return List::create(_["labels"] = as<IntegerVector>(wrap(labelsMat)), _["intervals"] = Ints);
     } else {
-      return List::create(_["labels"] = as<std::vector<int> >(wrap(labelsMat)));  
+      return List::create(_["labels"] = as<IntegerVector>(wrap(labelsMat)));  
     }
   } else {
     if (intervals) {
@@ -69,9 +70,9 @@ List SEB(mat X, uvec nints, const bool intervals = true, const std::string order
       if(nints0 > 1)
         Ints0.submat(1, 0, nints0 - 1, 0) = breaks.subvec(0, nints0 - 2);
       Ints0.col(1) = breaks;
-      return List::create(_["labels"] = as<std::vector<int> >(wrap(labelsVec)), _["intervals"] = Ints0);
+      return List::create(_["labels"] = as<IntegerVector>(wrap(labelsVec)), _["intervals"] = Ints0);
     } else {
-      return List::create(_["labels"] = as<std::vector<int> >(wrap(labelsVec)));  
+      return List::create(_["labels"] = as<IntegerVector>(wrap(labelsVec)));  
     }
   }
 }
